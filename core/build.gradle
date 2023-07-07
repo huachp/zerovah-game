@@ -1,0 +1,24 @@
+
+group 'org.zerovah.servercore'
+
+dependencies {
+    implementation(libs.netty)
+    implementation(libs.akka)
+    implementation(libs.guava)
+
+    implementation(libs.disruptor)
+    implementation(libs.kryo)
+    implementation(libs.caffeine)
+    implementation(libs.fastjson2)
+
+    api(libs.commons.lang3)
+    api(libs.yaml)
+    api(libs.bundles.log4j2)
+
+    //testCompile
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,72 @@
+
+subprojects { project ->
+
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+
+    group project_group
+    version '1.0'
+
+    sourceCompatibility = project_jdk
+    targetCompatibility = project_jdk
+
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    repositories {
+        mavenLocal()
+        //使用阿里云的maven仓库
+        maven {
+            allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
+        mavenCentral()
+    }
+
+    // 将原本idea out目录编译输出,改成输出到Gradle build目录中
+    idea {
+        module {
+            outputDir file(compileJava.destinationDirectory)
+            // sourceSets.test.output.resourcesDir
+            testOutputDir file(sourceSets.getByName('test').output.resourcesDir)
+        }
+    }
+
+    java {
+        withSourcesJar()
+        // and/or analogously use"withJavadocJar()" to get a"javadocJar" task
+    }
+
+    compileJava {
+        options.compilerArgs << '-g:lines,source,vars'
+    }
+
+    //------------------- maven upload ------------
+
+    sourcesJar {
+        exclude '*.properties', '*.xml'
+    }
+
+//    publishing {
+//        publications {
+//            mavenJava(MavenPublication) {
+//                from components.java
+//            }
+//        }
+//        repositories {
+//            maven {
+//                allowInsecureProtocol = true
+//                url "${repo_url}/repository/maven-releases"
+//                credentials {
+//                    username "${repo_username}"
+//                    password "${repo_password}"
+//                }
+//            }
+//        }
+//    }
+
+    //------------------- maven upload end ------------
+
+}

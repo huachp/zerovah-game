@@ -1,0 +1,30 @@
+rootProject.name = 'zerovah-game-cluster'
+include 'core'
+
+enableFeaturePreview('VERSION_CATALOGS')
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+//            version('netty.ver', '4.1.78.Final')
+
+            library('netty', 'io.netty:netty-all:4.1.80.Final')
+            library('akka', 'com.typesafe.akka:akka-actor_2.13:2.6.19')
+            library('guava', 'com.google.guava:guava:31.1-jre')
+            library('commons-lang3', 'org.apache.commons:commons-lang3:3.12.0')
+            library('yaml', 'org.yaml:snakeyaml:1.30')
+            library('kryo', 'com.esotericsoftware:kryo:5.3.0')
+            library('caffeine', 'com.github.ben-manes.caffeine:caffeine:2.9.3')
+            library('druid', 'com.alibaba:druid:1.2.11')
+            library('disruptor', 'com.lmax:disruptor:3.4.4')
+            library('redisson', 'org.redisson:redisson:3.17.4')
+            library('fastjson2', 'com.alibaba.fastjson2:fastjson2:2.0.34')
+
+            library('log4j-core', 'org.apache.logging.log4j:log4j-core:2.17.2')
+            library('log4j-api', 'org.apache.logging.log4j:log4j-api:2.17.2')
+            library('log4j-slf4j-impl', 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2')
+
+            bundle('log4j2', ['log4j-api', 'log4j-core', 'log4j-slf4j-impl'])
+        }
+    }
+}

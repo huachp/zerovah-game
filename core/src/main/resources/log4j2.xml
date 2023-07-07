@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--status:输出log4j2框架的日志级别 monitorInterval：动态加载时间，单位是秒，无需重启应用-->
+<configuration status="warn" monitorInterval="60">
+    <properties>
+        <property name="LOG_HOME">log</property><!--日志输出目录-->
+        <property name="SERVER_NAME">zero</property><!--日志文件名字-->
+    </properties>
+    <appenders>
+        <!--输出到控制台-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t][%p] %M(%F:%L): %m%n"/>
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <!-- Async Loggers will auto-flush in batches, so switch off immediateFlush. -->
+        <!--
+          name：Appender名称
+          immediateFlush：log4j2接收到日志事件时，是否立即将日志刷到磁盘。默认为true。
+          fileName：日志存储路径
+          filePattern：历史日志封存路径。注意后缀，log4j2自动识别zip等后缀，表示历史日志需要压缩。
+        -->
+        <RollingRandomAccessFile name="StdLogFile" fileName="${LOG_HOME}/${SERVER_NAME}.log"
+                                 filePattern="${LOG_HOME}/${SERVER_NAME}-%d{yyyy-MM-dd}.log" immediateFlush="false">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t][%p] %c.%M:%L: %m%n"/>
+            <Policies>
+                <!--
+                  interval：表示历史日志封存间隔时间，单位为filePattern设置的单位值。
+                  modulate：表示是否历史日志生成时间纠偏，纠偏以零点为基准进行。
+                 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <Filters>
+                <!--
+                  level，表示最低接受的日志级别，博客配置的为INFO，即我们期望打印INFO级别以上的日志。
+                  onMatch，表示当日志事件的日志级别与level一致时，应怎么做。一般为ACCEPT，表示接受。
+                  onMismatch，表示日志事件的日志级别与level不一致时，应怎么做。一般为DENY，表示拒绝。也可以为NEUTRAL表示中立。
+                 -->
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="ErrorLogFile" fileName="${LOG_HOME}/${SERVER_NAME}_error.log"
+                                 filePattern="${LOG_HOME}/${SERVER_NAME}-%d{yyyy-MM-dd}_error.log"
+                                 immediateFlush="false">
+            <PatternLayout
+                    pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t][%p] %c.%M:%L: %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingRandomAccessFile>
+    </appenders>
+
+    <loggers>
+        <!--
+          异步日志
+          includeLocation:位置信息比如哪个类，第几行
+          level：开发环境用trace ， 生产环境用 info
+        -->
+        <AsyncLogger name="org.zerovah.core" level="debug" includeLocation="true">
+            <AppenderRef ref="StdLogFile"/>
+            <AppenderRef ref="ErrorLogFile"/>
+        </AsyncLogger>
+
+        <root level="debug">
+            <appender-ref ref="Console"/>
+        </root>
+    </loggers>
+</configuration>
